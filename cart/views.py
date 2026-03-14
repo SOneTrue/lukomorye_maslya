@@ -7,7 +7,10 @@ from .cart import Cart
 def cart_add(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.add(product=product, quantity=int(request.POST.get("quantity", 1)))
+    quantity = int(request.POST.get("quantity", 1))
+    update = request.POST.get("update") == "1"
+    if quantity > 0:
+        cart.add(product=product, quantity=quantity, update_quantity=update)
     return redirect("cart_detail")
 
 @require_POST

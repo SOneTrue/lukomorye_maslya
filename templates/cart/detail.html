@@ -1,7 +1,273 @@
 {% extends "base.html" %}
+
+{% block title %}Корзина — Лукоморье{% endblock %}
+
+{% block extra_css %}
+    .cart-page {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child { border-bottom: none; }
+
+    .cart-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 15px;
+        border: 2px solid var(--secondary-color);
+        flex-shrink: 0;
+    }
+
+    .cart-item-info { flex-grow: 1; }
+
+    .cart-item-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--dark-color);
+        text-decoration: none;
+    }
+    .cart-item-title:hover { color: var(--primary-color); }
+
+    .cart-item-price {
+        font-size: 1rem;
+        color: #999;
+        margin-top: 4px;
+    }
+
+    .cart-item-total {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        min-width: 100px;
+        text-align: right;
+    }
+
+    .quantity-selector { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .qty-btn {
+        width: 32px; height: 32px;
+        border: 2px solid var(--secondary-color);
+        background: white;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: var(--secondary-color);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { background: var(--secondary-color); color: white; }
+    .qty-value {
+        width: 40px; height: 32px;
+        text-align: center;
+        border: 2px solid var(--secondary-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .btn-remove {
+        background: none;
+        border: 2px solid #ff4757;
+        color: #ff4757;
+        border-radius: 10px;
+        padding: 6px 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    .btn-remove:hover { background: #ff4757; color: white; }
+
+    .cart-summary {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 80px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        color: #666;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0 0;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--dark-color);
+    }
+
+    .btn-checkout {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #ff8e8e 100%);
+        border: none; color: white;
+        padding: 15px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.3s;
+    }
+    .btn-checkout:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(255,107,107,0.4);
+        color: white;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .empty-cart i { font-size: 5rem; color: #ddd; }
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Корзина</h2>
-    <p class="text-muted">Здесь будет корзина</p>
+
+<!-- Хлебные крошки -->
+<div style="background:white; padding:15px 0; margin-bottom:30px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'shop_index' %}" style="color:var(--dark-color); text-decoration:none;">
+                        <i class="bi bi-house"></i> Главная
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Корзина</li>
+            </ol>
+        </nav>
+    </div>
 </div>
+
+<div class="container mb-5">
+    <h2 class="fw-bold mb-4" style="color:var(--dark-color)">
+        <i class="bi bi-cart3"></i> Корзина
+        {% if cart|length > 0 %}
+            <span class="badge rounded-pill ms-2" style="background:var(--primary-color); font-size:1rem;">
+                {{ cart|length }}
+            </span>
+        {% endif %}
+    </h2>
+
+    {% if cart|length > 0 %}
+    <div class="row g-4">
+
+        <!-- Список товаров -->
+        <div class="col-lg-8">
+            <div class="cart-page">
+                {% for item in cart %}
+                <div class="cart-item">
+                    <!-- Фото -->
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                        <img src="https://placehold.co/100x100?text=Фото" alt="{{ item.product.name }}">
+                    {% endif %}
+
+                    <!-- Название и количество -->
+                    <div class="cart-item-info">
+                        <a href="{% url 'product_detail' item.product.id item.product.slug %}"
+                           class="cart-item-title">
+                            {{ item.product.name }}
+                        </a>
+                        <div class="cart-item-price">{{ item.price }} ₽ за шт.</div>
+
+                        <!-- Изменить количество -->
+                        <form action="{% url 'cart_add' item.product.id %}" method="post" class="quantity-selector">
+                            {% csrf_token %}
+                            <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}"
+                                    class="qty-btn" {% if item.quantity <= 1 %}disabled{% endif %}>−</button>
+                            <div class="qty-value">{{ item.quantity }}</div>
+                            <input type="hidden" name="quantity" value="{{ item.quantity|add:'1' }}">
+                            <input type="hidden" name="update" value="1">
+                            <button type="submit" class="qty-btn">+</button>
+                        </form>
+                    </div>
+
+                    <!-- Сумма -->
+                    <div class="cart-item-total">{{ item.total_price }} ₽</div>
+
+                    <!-- Удалить -->
+                    <form action="{% url 'cart_remove' item.product.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-remove" title="Удалить">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            <a href="{% url 'shop_index' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left"></i> Продолжить покупки
+            </a>
+        </div>
+
+        <!-- Итого -->
+        <div class="col-lg-4">
+            <div class="cart-summary">
+                <h4 class="fw-bold mb-3" style="color:var(--dark-color)">
+                    <i class="bi bi-receipt"></i> Итого
+                </h4>
+
+                <div class="summary-row">
+                    <span>Товаров:</span>
+                    <span>{{ cart|length }} шт.</span>
+                </div>
+                <div class="summary-row">
+                    <span>Доставка:</span>
+                    <span class="text-success">Бесплатно от 3000 ₽</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>К оплате:</span>
+                    <span style="color:var(--primary-color)">{{ cart.get_total_price }} ₽</span>
+                </div>
+
+                <button class="btn btn-checkout">
+                    <i class="bi bi-check-lg"></i> Оформить заказ
+                </button>
+
+                <div class="text-center mt-3 text-muted small">
+                    <i class="bi bi-lock-fill"></i> Безопасная оплата
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <!-- Пустая корзина -->
+    <div class="cart-page">
+        <div class="empty-cart">
+            <i class="bi bi-cart-x"></i>
+            <h4 class="mt-4" style="color:var(--dark-color)">Корзина пуста</h4>
+            <p class="text-muted">Добавьте товары из каталога</p>
+            <a href="{% url 'shop_index' %}" class="btn btn-checkout mt-3" style="width:auto; padding:12px 40px;">
+                <i class="bi bi-grid"></i> Перейти в каталог
+            </a>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
 {% endblock %}
