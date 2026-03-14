@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} — Лукоморье{% endblock %}
+
+{% block extra_css %}
+    .breadcrumb-section {
+        background: white;
+        padding: 15px 0;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .breadcrumb a { color: var(--dark-color); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--primary-color); }
+
+    .product-main {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .main-image {
+        width: 100%;
+        border-radius: 15px;
+        border: 3px solid var(--secondary-color);
+        transition: transform 0.3s ease;
+        cursor: zoom-in;
+    }
+    .main-image:hover { transform: scale(1.02); }
+
+    .product-info h1 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: var(--dark-color);
+    }
+
+    .product-price {
+        font-size: 2.8rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin: 20px 0;
+    }
+
+    .stock-in  { background: #d4edda; color: #155724; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+    .stock-out { background: #f8d7da; color: #721c24; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+
+    .delivery-info {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, #45b7aa 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .features-list { list-style: none; padding: 0; margin: 20px 0; }
+    .features-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #555;
+    }
+    .features-list li i { color: var(--secondary-color); font-size: 1.1rem; }
+
+    .quantity-selector { display: flex; align-items: center; gap: 15px; margin: 20px 0; }
+    .quantity-btn {
+        width: 40px; height: 40px;
+        border: 2px solid var(--secondary-color);
+        background: white;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        color: var(--secondary-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .quantity-btn:hover { background: var(--secondary-color); color: white; }
+    .quantity-input {
+        width: 60px; height: 40px;
+        text-align: center;
+        border: 2px solid var(--secondary-color);
+        border-radius: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .btn-cart-detail {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #ff8e8e 100%);
+        border: none; color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .btn-cart-detail:hover {
+        background: linear-gradient(135deg, #ff5252 0%, #ff6b6b 100%);
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(255,107,107,0.4);
+        color: white;
+    }
+
+    /* Вкладки */
+    .tabs { border-bottom: 2px solid #eee; margin-bottom: 20px; }
+    .tab-btn {
+        background: none; border: none;
+        padding: 15px 25px;
+        font-size: 1rem; color: #999;
+        cursor: pointer; transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+    }
+    .tab-btn:hover { color: var(--dark-color); }
+    .tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); font-weight: bold; }
+    .tab-content { display: none; padding: 20px 0; }
+    .tab-content.active { display: block; }
+
+    /* Характеристики */
+    .spec-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-label { font-weight: bold; color: var(--dark-color); }
+    .spec-value { color: #666; }
+
+    /* Похожие товары */
+    .related-card {
+        background: #f8f9fa;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    .related-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: inherit; }
+    .related-card img { width: 100%; height: 180px; object-fit: cover; }
+    .related-card-body { padding: 15px; }
+    .related-card-title { font-weight: bold; color: var(--dark-color); margin-bottom: 5px; font-size: 0.95rem; }
+    .related-card-price { color: var(--primary-color); font-weight: bold; font-size: 1.1rem; }
+{% endblock %}
+
+{% block content %}
+
+<!-- Хлебные крошки -->
+<section class="breadcrumb-section">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'shop_index' %}"><i class="bi bi-house"></i> Главная</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'shop_index' %}">Каталог</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'product_list_by_category' product.category.slug %}">
+                        {{ product.category.name }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Основной блок товара -->
+<section class="container">
+    <div class="product-main">
+        <div class="row">
+            <!-- Изображение -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="main-image">
+                {% else %}
+                    <img src="https://placehold.co/600x500?text=Нет+фото" alt="{{ product.name }}" class="main-image">
+                {% endif %}
+            </div>
+
+            <!-- Информация -->
+            <div class="col-lg-6">
+                <span class="badge mb-2" style="background:var(--secondary-color); font-size:0.9rem; padding:6px 14px; border-radius:20px;">
+                    {{ product.category.name }}
+                </span>
+                <br>
+                <span class="{% if product.available %}stock-in{% else %}stock-out{% endif %} mb-3 d-inline-block">
+                    {% if product.available %}
+                        <i class="bi bi-check-circle"></i> В наличии
+                    {% else %}
+                        <i class="bi bi-x-circle"></i> Нет в наличии
+                    {% endif %}
+                </span>
+
+                <h1>{{ product.name }}</h1>
+
+                <div class="product-price">{{ product.price }} ₽</div>
+
+                <div class="delivery-info">
+                    <div><i class="bi bi-truck"></i> Бесплатная доставка от 3000 ₽</div>
+                    <div class="mt-2"><i class="bi bi-clock"></i> Доставка 1-3 дня</div>
+                </div>
+
+                <p style="color:#666; line-height:1.8;">{{ product.description }}</p>
+
+                <ul class="features-list">
+                    <li><i class="bi bi-check-circle-fill"></i> Гипоаллергенные материалы</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Сертификат качества</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Возврат в течение 14 дней</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Подарочная упаковка</li>
+                </ul>
+
+                <!-- Форма добавления в корзину -->
+                <form action="{% url 'cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <span>Количество:</span>
+                        <button type="button" class="quantity-btn" onclick="decreaseQty()">−</button>
+                        <input type="number" name="quantity" id="quantity"
+                               class="quantity-input" value="1" min="1" max="99">
+                        <button type="button" class="quantity-btn" onclick="increaseQty()">+</button>
+                    </div>
+                    {% if product.available %}
+                        <button type="submit" class="btn btn-cart-detail">
+                            <i class="bi bi-cart-plus"></i> Добавить в корзину
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-cart-detail" disabled>
+                            <i class="bi bi-x-circle"></i> Нет в наличии
+                        </button>
+                    {% endif %}
+                </form>
+
+                <a href="{% url 'shop_index' %}" class="btn btn-outline-secondary rounded-pill w-100">
+                    <i class="bi bi-arrow-left"></i> Вернуться в каталог
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Вкладки: Описание / Характеристики / Доставка -->
+    <div class="product-main">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('description', this)">
+                <i class="bi bi-file-text"></i> Описание
+            </button>
+            <button class="tab-btn" onclick="switchTab('specs', this)">
+                <i class="bi bi-list-ul"></i> Характеристики
+            </button>
+            <button class="tab-btn" onclick="switchTab('delivery', this)">
+                <i class="bi bi-truck"></i> Доставка
+            </button>
+        </div>
+
+        <div id="description" class="tab-content active">
+            <p style="color:#555; line-height:1.9;">{{ product.description }}</p>
+        </div>
+
+        <div id="specs" class="tab-content">
+            <div class="spec-row">
+                <span class="spec-label">Категория</span>
+                <span class="spec-value">{{ product.category.name }}</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Цена</span>
+                <span class="spec-value">{{ product.price }} ₽</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Наличие</span>
+                <span class="spec-value">{% if product.available %}Есть в наличии{% else %}Нет в наличии{% endif %}</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Артикул</span>
+                <span class="spec-value">{{ product.id }}</span>
+            </div>
+        </div>
+
+        <div id="delivery" class="tab-content">
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-box-seam"></i> Способы доставки</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-3"><strong>Курьерская доставка</strong><br><span class="text-muted">1-3 дня, бесплатно от 3000 ₽</span></li>
+                        <li class="mb-3"><strong>Пункты выдачи</strong><br><span class="text-muted">2-5 дней, от 150 ₽</span></li>
+                        <li class="mb-3"><strong>Почта России</strong><br><span class="text-muted">5-10 дней, от 200 ₽</span></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5><i class="bi bi-credit-card"></i> Оплата</h5>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Банковская карта</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Оплата при получении</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Безналичный расчёт</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Похожие товары -->
+    {% if related_products %}
+    <div class="product-main">
+        <h3 class="mb-4" style="color:var(--dark-color)">
+            <i class="bi bi-heart"></i> Похожие товары
+        </h3>
+        <div class="row g-4">
+            {% for related in related_products %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'product_detail' related.id related.slug %}" class="related-card">
+                    {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.name }}">
+                    {% else %}
+                        <img src="https://placehold.co/300x180?text=Фото" alt="{{ related.name }}">
+                    {% endif %}
+                    <div class="related-card-body">
+                        <div class="related-card-title">{{ related.name }}</div>
+                        <div class="related-card-price">{{ related.price }} ₽</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function increaseQty() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) < 99) input.value = parseInt(input.value) + 1;
+    }
+    function decreaseQty() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+    }
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+{% endblock %}
