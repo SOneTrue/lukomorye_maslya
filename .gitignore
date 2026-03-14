@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pycache
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Static (собранные файлы, если будешь делать collectstatic)
+/staticfiles/
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code (на всякий случай)
+.vscode/
+
+# Env файлы с секретами
+.env
+.env.local
+.env.*.local
+
+# Миграции (опционально — для диплома лучше оставить)
+# */migrations/
