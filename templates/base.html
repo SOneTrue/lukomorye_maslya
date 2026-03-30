@@ -38,12 +38,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'store:index' %}#about">
-                        <i class="bi bi-info-circle"></i> О нас
+                        <i class="bi bi-info-circle"></i> О магазине
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'store:index' %}#contact">
-                        <i class="bi bi-telephone"></i> Контакты
+                        <i class="bi bi-geo-alt"></i> Контакты
                     </a>
                 </li>
             </ul>
@@ -64,40 +64,35 @@
         <div class="row">
             <div class="col-md-4">
                 <h5><i class="bi bi-stars"></i> Лукоморье</h5>
-                <p style="color:#b0bec5;">🧸 Лучший магазин детских игрушек с 2010 года</p>
-                <p style="color:#b0bec5;">📍 г. Москва, ул. Детская, д. 1</p>
-                <p style="color:#b0bec5;">📞 +7 (495) 123-45-67</p>
+                <p style="color:#b0bec5;">Магазин детских игрушек</p>
+                <p style="color:#b0bec5;">ул. Октябрьской Революции, 47, Буй</p>
+                <p style="color:#b0bec5;">Костромская область, 157006</p>
             </div>
             <div class="col-md-4">
                 <h5>🗺️ Навигация</h5>
                 <ul class="list-unstyled">
                     <li><a href="{% url 'store:index' %}"><i class="bi bi-chevron-right"></i> Главная</a></li>
                     <li><a href="{% url 'store:catalog' %}"><i class="bi bi-chevron-right"></i> Каталог</a></li>
-                    <li><a href="{% url 'store:index' %}#about"><i class="bi bi-chevron-right"></i> О нас</a></li>
+                    <li><a href="{% url 'store:index' %}#about"><i class="bi bi-chevron-right"></i> О магазине</a></li>
                     <li><a href="{% url 'store:index' %}#contact"><i class="bi bi-chevron-right"></i> Контакты</a></li>
                 </ul>
             </div>
             <div class="col-md-4">
-                <h5>📱 Мы в соцсетях</h5>
-                <div class="social-links">
-                    <a href="#"><i class="bi bi-vk"></i></a>
-                    <a href="#"><i class="bi bi-telegram"></i></a>
-                    <a href="#"><i class="bi bi-youtube"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                </div>
-                <h5 class="mt-4">💳 Способы оплаты</h5>
-                <div style="font-size:2rem;color:#ffcc80;">
-                    <i class="bi bi-credit-card me-2"></i>
-                    <i class="bi bi-wallet2 me-2"></i>
-                    <i class="bi bi-cash-coin"></i>
-                </div>
+                <h5>📍 Самовывоз</h5>
+                <p style="color:#b0bec5;">
+                    После оформления заказа на сайте вы можете забрать
+                    выбранные товары в магазине.
+                </p>
+                <p style="color:#b0bec5;">
+                    Адрес выдачи: ул. Октябрьской Революции, 47, Буй
+                </p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p class="mb-0">© 2024 Детский магазин игрушек Лукоморье. Все права защищены. 🧸</p>
+            <p class="mb-0">© 2026 Детский магазин игрушек Лукоморье. Все права защищены.</p>
             <p class="mt-2" style="font-size:0.9rem;">
                 <a href="#" style="display:inline;">Политика конфиденциальности</a> |
-                <a href="#" style="display:inline;">Публичная оферта</a>
+                <a href="#" style="display:inline;">Пользовательское соглашение</a>
             </p>
         </div>
     </div>
@@ -118,14 +113,14 @@
             <div class="modal-body">
                 <div id="cartItems"></div>
                 <div class="text-end mt-3">
-                    <h5>Итого: <span id="cartTotal"
-                          style="color:#ff6b35;font-weight:800;">0 ₽</span></h5>
+                    <h5>Всего товаров: <span id="cartCountSummary"
+                          style="color:#ff6b35;font-weight:800;">0</span></h5>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"
                         style="border-radius:25px;" data-bs-dismiss="modal">
-                    Продолжить покупки
+                    Продолжить выбор
                 </button>
                 <button type="button" class="btn" onclick="checkout()"
                         style="background:linear-gradient(135deg,#ff6b35,#f7931e);
