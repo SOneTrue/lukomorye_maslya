@@ -1,5 +1,10 @@
+import json
+
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Product
+from django.views.decorators.http import require_POST
+
+from .models import Category, Product, Order, OrderItem
 
 
 def index(request):
@@ -42,3 +47,62 @@ def product_detail(request, id, slug):
         "product": product,
         "related_products": related_products,
     })
+
+
+def cart_page(request):
+    return render(request, "store/cart.html")
+
+
+@require_POST
+def create_order(request):
+    try:
+        data = json.loads(request.body)
+
+        customer_name = data.get("customer_name", "").strip()
+        phone = data.get("phone", "").strip()
+        comment = data.get("comment", "").strip()
+        items = data.get("items", [])
+
+        if not customer_name or not phone:
+            return JsonResponse({
+                "success": False,
+                "message": "Укажите имя и телефон."
+            }, status=400)
+
+        if not items:
+            return JsonResponse({
+                "success": False,
+                "message": "Корзина пуста."
+            }, status=400)
+
+        order = Order.objects.create(
+            customer_name=customer_name,
+            phone=phone,
+            comment=comment,
+            status="new"
+        )
+
+        for item in items:
+            product_id = item.get("id")
+            quantity = int(item.get("quantity", 1))
+
+            product = get_object_or_404(Product, id=product_id, available=True)
+
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=quantity,
+                price=product.price
+            )
+
+        return JsonResponse({
+            "success": True,
+            "order_number": order.order_number,
+            "message": f"Заказ оформлен. Номер заказа: {order.order_number}"
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "message": f"Ошибка оформления заказа: {str(e)}"
+        }, status=400)
