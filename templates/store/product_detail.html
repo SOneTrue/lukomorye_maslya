@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} — Лукоморье{% endblock %}
+
+{% block content %}
+<section class="product-detail-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="product-detail-image-wrapper">
+                    <img src="{{ product.image_url }}"
+                         alt="{{ product.name }}"
+                         class="product-detail-image">
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <p class="text-muted mb-1">
+                    <a href="{% url 'store:catalog' %}" class="text-decoration-none">Каталог</a>
+                    /
+                    <a href="{% url 'store:catalog_by_category' product.category.slug %}" class="text-decoration-none">
+                        {{ product.category.name }}
+                    </a>
+                </p>
+                <h1 class="mb-3">{{ product.name }}</h1>
+
+                {% if product.is_hit %}
+                    <span class="badge bg-warning text-dark me-2">Хит</span>
+                {% endif %}
+
+                <div class="mt-3 mb-4">
+                    <span style="font-size:2rem;font-weight:700;color:#ff6b35;">
+                        {{ product.price }} ₽
+                    </span>
+                    {% if product.old_price %}
+                        <span class="ms-2 text-muted" style="text-decoration:line-through;">
+                            {{ product.old_price }} ₽
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if product.description %}
+                    <p class="mb-4" style="font-size:1.05rem;line-height:1.8;">
+                        {{ product.description }}
+                    </p>
+                {% endif %}
+
+                <button type="button"
+                        class="btn"
+                        onclick="addToCart({{ product.id }}, '{{ product.name|escapejs }}', {{ product.price }}, '{{ product.image_url|escapejs }}')"
+                        style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:white;border-radius:25px;font-weight:700;">
+                    <i class="bi bi-basket"></i> Добавить в заказ
+                </button>
+
+                <p class="text-muted mt-3">
+                    После добавления товара вы сможете оформить заказ и забрать его в магазине
+                    по адресу: ул. Октябрьской Революции, 47, Буй.
+                </p>
+            </div>
+        </div>
+
+        {% if related_products %}
+            <div class="mt-5">
+                <h2 class="section-title mb-4">Похожие товары</h2>
+                <div class="row g-4">
+                    {% for p in related_products %}
+                        <div class="col-6 col-md-3">
+                            <div class="product-card h-100">
+                                <img src="{{ p.image_url }}"
+                                     alt="{{ p.name }}"
+                                     class="product-image">
+                                <div class="product-card-body">
+                                    <div class="product-category">{{ p.category.name }}</div>
+                                    <h3 class="product-title">{{ p.name }}</h3>
+                                    <div class="product-price mb-3">
+                                        {{ p.price }} ₽
+                                    </div>
+                                    <a href="{{ p.get_absolute_url }}" class="btn-add-cart">
+                                        <i class="bi bi-eye"></i> Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
