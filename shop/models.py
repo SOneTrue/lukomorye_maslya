@@ -141,3 +141,20 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+
+
+class ContactRequest(models.Model):
+    name = models.CharField("Имя", max_length=255)
+    phone = models.CharField("Телефон", max_length=50)
+    email = models.EmailField("Email", blank=True)
+    message = models.TextField("Сообщение", blank=True)
+    created_at = models.DateTimeField("Создано", auto_now_add=True)
+    processed = models.BooleanField("Обработано", default=False)
+
+    class Meta:
+        verbose_name = "Заявка с сайта"
+        verbose_name_plural = "Заявки с сайта"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} — {self.phone}"

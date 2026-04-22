@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem
+from .models import Category, Product, Order, OrderItem, ContactRequest
 
 
 @admin.register(Category)
@@ -31,3 +31,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 
+@admin.register(ContactRequest)
+class ContactRequestAdmin(admin.ModelAdmin):
+    list_display = ("name", "phone", "email", "created_at", "processed")
+    list_filter = ("processed", "created_at")
+    search_fields = ("name", "phone", "email", "message")
+    list_editable = ("processed",)

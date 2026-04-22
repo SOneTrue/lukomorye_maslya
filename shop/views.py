@@ -1,10 +1,11 @@
 import json
 
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
+from django.contrib import messages
 
-from .models import Category, Product, Order, OrderItem
+from .models import Category, Product, Order, OrderItem, ContactRequest
 
 
 def index(request):
@@ -106,3 +107,25 @@ def create_order(request):
             "success": False,
             "message": f"Ошибка оформления заказа: {str(e)}"
         }, status=400)
+
+def submit_contact_request(request):
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        email = request.POST.get("email", "").strip()
+        message = request.POST.get("message", "").strip()
+
+        if name and phone:
+            ContactRequest.objects.create(
+                name=name,
+                phone=phone,
+                email=email,
+                message=message
+            )
+            messages.success(request, "✅ Ваш вопрос успешно отправлен! Мы свяжемся с вами.")
+        else:
+            messages.error(request, "⚠️ Пожалуйста, заполните имя и телефон.")
+
+        return redirect("store:index")
+
+    return redirect("store:index")

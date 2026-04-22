@@ -224,23 +224,24 @@
                     <div class="contact-form">
                         <h2 class="section-title" style="font-size:2rem;">✉️ Задать вопрос</h2>
                         <p class="section-subtitle">Напишите нам по вопросам наличия товаров</p>
-                        <form id="contactForm" onsubmit="submitForm(event)">
+                        <form method="post" action="{% url 'store:submit_contact_request' %}">
+                            {% csrf_token %}
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control"
+                                    <input type="text" name="name" class="form-control"
                                            placeholder="Ваше имя" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="tel" class="form-control"
+                                    <input type="tel" name="phone" class="form-control"
                                            placeholder="Ваш телефон" required>
                                 </div>
                                 <div class="col-12">
-                                    <input type="email" class="form-control"
-                                           placeholder="Ваш Email" required>
+                                    <input type="email" name="email" class="form-control"
+                                           placeholder="Ваш Email">
                                 </div>
                                 <div class="col-12">
-                                <textarea class="form-control" rows="4"
-                                          placeholder="Ваш вопрос"></textarea>
+                                    <textarea name="message" class="form-control" rows="4"
+                                              placeholder="Ваш вопрос"></textarea>
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn-submit">
@@ -255,14 +256,4 @@
         </div>
     </section>
 
-{% endblock %}
-
-{% block extra_js %}
-    <script>
-        function submitForm(event) {
-            event.preventDefault();
-            showToast('✅ Сообщение отправлено! Мы свяжемся с вами.');
-            document.getElementById('contactForm').reset();
-        }
-    </script>
 {% endblock %}
