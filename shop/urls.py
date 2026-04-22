@@ -11,4 +11,6 @@ urlpatterns = [
     path("order/create/", views.create_order, name="create_order"),
     path("<int:id>/<slug:slug>/", views.product_detail, name="product_detail"),
     path("contact/submit/", views.submit_contact_request, name="submit_contact_request"),
+    path("privacy-policy/", views.privacy_policy, name="privacy_policy"),
+    path("user-agreement/", views.user_agreement, name="user_agreement"),
 ]

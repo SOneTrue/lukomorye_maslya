@@ -129,3 +129,10 @@ def submit_contact_request(request):
         return redirect("store:index")
 
     return redirect("store:index")
+
+def privacy_policy(request):
+    return render(request, "store/privacy_policy.html")
+
+
+def user_agreement(request):
+    return render(request, "store/user_agreement.html")

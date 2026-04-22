@@ -380,3 +380,43 @@ body {
     font-weight: 800;
     color: var(--dark-color);
 }
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #fff3e0 0%, #fff8e1 50%, #e8f5e9 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.site-content {
+    flex: 1;
+}
+
+.legal-page h1 {
+    font-weight: 900;
+    color: var(--dark-color);
+}
+
+.legal-page h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--dark-color);
+    margin-bottom: 12px;
+}
+
+.legal-page p,
+.legal-page li {
+    color: #546e7a;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.legal-page ul {
+    padding-left: 1.2rem;
+}
