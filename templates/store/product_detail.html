@@ -46,12 +46,15 @@
                     </p>
                 {% endif %}
 
-                <button type="button"
-                        class="btn"
-                        onclick="addToCart({{ product.id }}, '{{ product.name|escapejs }}', {{ product.price }}, '{{ product.image_url|escapejs }}')"
-                        style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:white;border-radius:25px;font-weight:700;">
-                    <i class="bi bi-basket"></i> Добавить в заказ
-                </button>
+                <div class="mt-4">
+                    <div
+                        class="product-cart-control"
+                        data-product-id="{{ product.id }}"
+                        data-product-name="{{ product.name|escapejs }}"
+                        data-product-price="{{ product.price|floatformat:0 }}"
+                        data-product-image="{{ product.image_url|escapejs }}">
+                    </div>
+                </div>
 
                 <p class="text-muted mt-3">
                     После добавления товара вы сможете оформить заказ и забрать его в магазине

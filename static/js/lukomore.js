@@ -4,13 +4,22 @@ function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
     renderCartPage();
+    renderProductCartControls();
 }
 
 function loadCart() {
     const saved = localStorage.getItem("cart");
     cart = saved ? JSON.parse(saved) : [];
+
+    cart = cart.map(item => ({
+        ...item,
+        price: Number(item.price) || 0,
+        quantity: Number(item.quantity) || 1
+    }));
+
     updateCartCount();
     renderCartPage();
+    renderProductCartControls();
 }
 
 function updateCartCount() {
@@ -19,14 +28,31 @@ function updateCartCount() {
     if (badge) badge.textContent = count;
 }
 
+function getCartItem(id) {
+    id = Number(id);
+    return cart.find(item => item.id === id);
+}
+
+function escapeQuotes(str) {
+    return String(str).replace(/'/g, "\\'");
+}
+
 function addToCart(id, name, price, image = "") {
     id = Number(id);
     price = Number(price);
+
+    if (isNaN(price)) {
+        price = 0;
+    }
 
     const existing = cart.find(item => item.id === id);
 
     if (existing) {
         existing.quantity += 1;
+
+        if (!existing.price || Number(existing.price) === 0) {
+            existing.price = price;
+        }
     } else {
         cart.push({
             id,
@@ -62,6 +88,36 @@ function changeQuantity(id, delta) {
     saveCart();
 }
 
+function renderProductCartControls() {
+    const controls = document.querySelectorAll(".product-cart-control");
+
+    controls.forEach(control => {
+        const id = Number(control.dataset.productId);
+        const name = control.dataset.productName;
+        const price = Number(control.dataset.productPrice);
+        const image = control.dataset.productImage || "";
+
+        const item = getCartItem(id);
+
+        if (item) {
+            control.innerHTML = `
+                <div class="cart-qty-box d-inline-flex align-items-center gap-2">
+                    <button type="button" class="qty-btn" onclick="changeQuantity(${id}, -1)">−</button>
+                    <span class="qty-value">${item.quantity} в корзине</span>
+                    <button type="button" class="qty-btn" onclick="changeQuantity(${id}, 1)">+</button>
+                </div>
+            `;
+        } else {
+            control.innerHTML = `
+                <button type="button" class="btn-add-cart"
+                        onclick="addToCart(${id}, '${escapeQuotes(name)}', ${price}, '${escapeQuotes(image)}')">
+                    <i class="bi bi-basket"></i> Добавить в заказ
+                </button>
+            `;
+        }
+    });
+}
+
 function renderCartPage() {
     const cartItems = document.getElementById("cartPageItems");
     const cartCount = document.getElementById("cartPageCount");
@@ -79,30 +135,36 @@ function renderCartPage() {
         return;
     }
 
-    cartItems.innerHTML = cart.map(item => `
-        <div class="d-flex justify-content-between align-items-center p-3 mb-3 rounded-4"
-             style="border:1px solid #eee;background:#fffaf5;">
-            <div>
-                <strong style="color: var(--dark-color);">${item.name}</strong><br>
-                <small style="color: #90a4ae;">${item.price.toLocaleString()} ₽ × ${item.quantity}</small>
-            </div>
-            <div class="text-end">
-                <div class="mb-2" style="font-weight:800;color:#ff6b35;">
-                    ${(item.price * item.quantity).toLocaleString()} ₽
-                </div>
-                <div class="d-flex align-items-center gap-2 justify-content-end">
-                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${item.id}, -1)">−</button>
-                    <span style="min-width:24px;text-align:center;">${item.quantity}</span>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${item.id}, 1)">+</button>
-                    <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromCart(${item.id})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join("");
+    cartItems.innerHTML = cart.map(item => {
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 1;
+        const total = price * quantity;
 
-    const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        return `
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 rounded-4"
+                 style="border:1px solid #eee;background:#fffaf5;">
+                <div>
+                    <strong style="color: var(--dark-color);">${item.name}</strong><br>
+                    <small style="color: #90a4ae;">${price.toLocaleString()} ₽ × ${quantity}</small>
+                </div>
+                <div class="text-end">
+                    <div class="mb-2" style="font-weight:800;color:#ff6b35;">
+                        ${total.toLocaleString()} ₽
+                    </div>
+                    <div class="d-flex align-items-center gap-2 justify-content-end">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${item.id}, -1)">−</button>
+                        <span style="min-width:24px;text-align:center;">${quantity}</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${item.id}, 1)">+</button>
+                        <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromCart(${item.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    const totalCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
     if (cartCount) cartCount.textContent = totalCount;
 }
 

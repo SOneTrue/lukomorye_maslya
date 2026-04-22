@@ -351,3 +351,32 @@ body {
         max-height: 360px;
     }
 }
+
+.cart-qty-box {
+    background: #fff3e0;
+    border-radius: 30px;
+    padding: 8px 12px;
+    border: 2px solid #ffcc80;
+}
+
+.qty-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qty-value {
+    min-width: 90px;
+    text-align: center;
+    font-weight: 800;
+    color: var(--dark-color);
+}
