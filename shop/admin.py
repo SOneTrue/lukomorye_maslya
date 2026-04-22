@@ -28,3 +28,6 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ("status", "created_at")
     search_fields = ("order_number", "customer_name", "phone")
     inlines = [OrderItemInline]
+
+
+
