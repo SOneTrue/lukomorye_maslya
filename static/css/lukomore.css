@@ -369,14 +369,14 @@ body {
 }
 
 .product-image {
-    width: 100%;
+    width: 85%;
     height: 100%;
     object-fit: contain;
-    object-position: center;
+    object-position: 48% 50%;
     display: block;
     border-radius: 16px;
     background: transparent;
-    margin: 0;
+    margin: 0 auto;
     border: none;
     transition: transform 0.3s ease;
 }

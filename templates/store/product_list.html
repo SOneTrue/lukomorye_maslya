@@ -64,9 +64,9 @@
                                             <img src="{{ product.image_url }}"
                                                  alt="{{ product.name }}"
                                                  class="product-image"
-                                                 onerror="this.onerror=null;this.src='{% static 'img/i.webp' %}';">
+                                                 onerror="this.onerror=null;this.src='{% static '/img/i.png' %}';">
                                         {% else %}
-                                            <img src="{% static 'img/i.webp' %}"
+                                            <img src="{% static '/img/i.png' %}"
                                                  alt="Изображение временно отсутствует"
                                                  class="product-image">
                                         {% endif %}
