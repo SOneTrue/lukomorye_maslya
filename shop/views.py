@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 from .models import Category, Product, Order, OrderItem, ContactRequest
 
@@ -24,16 +25,21 @@ def index(request):
 def product_list(request, category_slug=None):
     current_category = None
     categories = Category.objects.all()
-    products = Product.objects.filter(available=True)
+    products = Product.objects.filter(available=True).order_by("-id")
 
     if category_slug:
         current_category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=current_category)
 
+    paginator = Paginator(products, 9)  # 9 товаров на страницу
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "store/product_list.html", {
         "current_category": current_category,
         "categories": categories,
-        "products": products,
+        "products": page_obj,
+        "page_obj": page_obj,
     })
 
 
