@@ -3,7 +3,7 @@ services:
     build: .
     container_name: lukomorye_web
     ports:
-      - "8002:8000"
+      - "8082:8000"
     volumes:
       - .:/app
     command: sh -c "mkdir -p /app/staticfiles && python manage.py collectstatic --noinput && gunicorn lukomorye.wsgi:application --bind 0.0.0.0:8000 --workers 3"
