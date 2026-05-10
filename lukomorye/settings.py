@@ -14,7 +14,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "http://84.54.57.6",
-    "http://84.54.57.6:8002",
+    "http://84.54.57.6:8082",
 ]
 
 INSTALLED_APPS = [
