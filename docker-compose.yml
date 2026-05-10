@@ -1,11 +1,7 @@
-version: "3.9"
-
 services:
   web:
     build: .
     container_name: lukomorye_web
     ports:
       - "8002:8000"
-    volumes:
-      - .:/app
     restart: unless-stopped
